@@ -1,3 +1,4 @@
+#install packages
 
 install.packages("haven") 
 install.packages("tidyverse")
@@ -99,17 +100,21 @@ Anova(m2, type = 3)
 m3 <- lmer(data = CT_VM_long, PR_Del ~ 1 + (1|P_Num_numerical) + Occasion_Fac_Hel*User_Group_Fac_Hel)
 Anova(m3, type = 3)
 
+#linear mixed effect model for delayed VEM with fixed effects of occasion, user-group, and age, with a random intercept for participant number
 
 m4 <- lmer(data = CT_VM_long, PR_Del ~ 1 + (1|P_Num_numerical) + Occasion_Fac_Hel*User_Group_Fac_Hel*Age_Group_Fac_Hel)
 summary(m4)
 Anova(m4, type = 3)
 check_model(m4)
 
+#linear mixed effect model for immediate VEM with fixed effects of occasion, user-group, and age, with a random intercept for participant number
+
 m5 <- lmer(data = CT_VM_long, PR_IM ~ 1 + (1|P_Num_numerical) + Occasion_Fac_Hel*User_Group_Fac_Hel*Age_Group_Fac_Hel)
 summary(m5)
 Anova(m5, type = 3)
 check_model(m5)
 
+#estimated marginal means for significant findings
 
 emmeans(m4, specs = pairwise ~ User_Group_Fac_Hel:Age_Group_Fac_Hel )
 emmeans(m4, specs = pairwise ~ Occasion_Fac_Hel)
@@ -119,7 +124,11 @@ emmeans(m5, specs = pairwise ~ User_Group_Fac_Hel:Age_Group_Fac_Hel )
 emmeans(m5, specs = pairwise ~ Occasion_Fac_Hel)
 emmeans(m5, specs = pairwise ~ User_Group_Fac_Hel)
 
+#interaction term for user and age
+
 CT_VM_long$User_Age <- interaction(CT_VM_long$User_Group_Fac_Hel,CT_VM_long$Age_Group_Fac_Hel)
+
+#plot 
 
 ggplot(data=CT_VM_long, aes(fill=User_Age))+
   
