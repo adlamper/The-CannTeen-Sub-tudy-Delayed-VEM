@@ -126,20 +126,23 @@ emmeans(m5, specs = pairwise ~ User_Group_Fac_Hel)
 
 #interaction term for user and age
 
-CT_VM_long$User_Age <- interaction(CT_VM_long$User_Group_Fac_Hel,CT_VM_long$Age_Group_Fac_Hel)
+CT_VM_long$User_Age <- interaction(CT_VM_long$User_Group_Fac_Hel,CT_VM_long$Age_Group_Fac_Hel) 
 
-#plot 
+m6 <- lmer(data = CT_VM_long, PR_Del ~ 1 +(1|P_Num_numerical) + User_Age*Occasion_Fac)
 
-ggplot(data=CT_VM_long, aes(fill=User_Age))+
+#plot
+mean_task <- as.data.frame(summary(emmeans(m6,~User_Age*Occasion_Fac)))
+
+CT_VM_long$Occasion_Fac1 <- as.numeric(CT_VM_long$Occasion_Fac)
+
+  
+  ggplot(data=CT_VM_long, aes(fill=User_Age))+
   
   geom_line(data=CT_VM_long %>% filter(User_Age=="0.0"),aes(group=c(P_Num_numerical), x=Occasion_Fac, y=PR_Del), color = "darkorange", size = 1, alpha = 0.1)+
   geom_line(data=CT_VM_long %>% filter(User_Age=="0.1"),aes(group=c(P_Num_numerical), x=Occasion_Fac, y=PR_Del), color = "darkgreen", size = 1, alpha = 0.1)+
   geom_line(data=CT_VM_long %>% filter(User_Age=="1.0"),aes(group=c(P_Num_numerical), x=Occasion_Fac, y=PR_Del), color = "salmon", size = 1, alpha = 0.1)+
   geom_line(data=CT_VM_long %>% filter(User_Age=="1.1"),aes(group=c(P_Num_numerical), x=Occasion_Fac, y=PR_Del), color = "dodgerblue", size = 1, alpha = 0.1)+
 
-  # scale_linetype_binned() +
-  # scale_shape_binned() +
-  
   geom_ribbon(data=mean_task %>% filter(User_Age=="0.0"),aes(x=c(1,2,3), ymin=lower.CL, y=emmean, ymax=upper.CL), fill = "darkorange", alpha=0.5) +
   geom_ribbon(data=mean_task %>% filter(User_Age=="0.1"),aes(x=c(1,2,3), ymin=lower.CL, y=emmean, ymax=upper.CL), fill = "darkgreen",alpha=0.5) +
   geom_ribbon(data=mean_task %>% filter(User_Age=="1.0"),aes(x=c(1,2,3), ymin=lower.CL, y=emmean, ymax=upper.CL), fill = "salmon", alpha=0.5) +
@@ -159,3 +162,4 @@ xlab("Occasion") + ylab("Delayed Prose Recall Performance") + scale_fill_manual(
                                                                                  breaks=c('Adolescent User', 'Adolescent Control', 'Adult User', 'Adult Control'),
                                                                                  values=c('Adolescent User' = "dodgerblue", 'Adolescent Control' = "darkgreen", 'Adult User' = "salmon", 'Adult Control' ="darkorange"))+ 
     theme(legend.position="right") + theme_classic()
+
